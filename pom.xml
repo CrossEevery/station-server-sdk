@@ -8,14 +8,139 @@
   <packaging>jar</packaging>
 
   <name>station-server-sdk</name>
-  <url>http://maven.apache.org</url>
+  <url>https://www.crossevery.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <org.projectlombok.version>1.18.12</org.projectlombok.version>
+    <lombok.version>1.18.12</lombok.version>
+    <java.version>1.8</java.version>
+    <junit.version>4.13</junit.version>
+    <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
+    <aspectj.version>1.9.5</aspectj.version>
+    <spring.context.support.version>5.2.5.RELEASE</spring.context.support.version>
+    <!-- 服务注册与治理版本 -->
+    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
+    <dubbo-spring-boot-starter.version>2.7.8</dubbo-spring-boot-starter.version>
+    <dubbo.version>2.7.8</dubbo.version>
+    <dubbo-jsonrpc.version>2.7.2</dubbo-jsonrpc.version>
+    <dubbo-spring-context-support.version>1.0.10</dubbo-spring-context-support.version>
+    <nacos-discovery-spring-boot-starter.version>0.2.1</nacos-discovery-spring-boot-starter.version>
+    <nacos-client.version>1.0.0</nacos-client.version>
+    <dubbo-registry-nacos.version>2.7.8</dubbo-registry-nacos.version>
+    <!-- 常用工具类 -->
+    <fastjson.version>1.2.83</fastjson.version>
+    <commons.lang3.version>3.10</commons.lang3.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <commons-fileupload.version>1.4</commons-fileupload.version>
+    <commons-io.version>2.6</commons-io.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
+    <commons-codec.version>1.14</commons-codec.version>
+    <commons-configuration.version>1.10</commons-configuration.version>
+    <hutool.version>5.3.0</hutool.version>
+    <lombok.version>1.18.12</lombok.version>
+    <javax.validation.version>2.0.1.Final</javax.validation.version>
+    <freemarker.version>2.3.30</freemarker.version>
+    <!--文档-->
+    <swagger.version>2.9.2</swagger.version>
+    <!--数据库-->
+    <mysql-connector.version>8.0.19</mysql-connector.version>
+    <druid.version>1.1.22</druid.version>
+    <mybatisplus.version>2.2.0</mybatisplus.version>
+    <mybatisplus.spring.boot.version>1.0.5</mybatisplus.spring.boot.version>
+    <!--redis-->
+    <jedis2.version>2.9.3</jedis2.version>
+    <jedis3.version>3.2.0</jedis3.version>
+    <!--kafka-->
+    <kafka-clients.version>0.11.0.3</kafka-clients.version>
+    <spring-kafka>2.3.7.RELEASE</spring-kafka>
+    <!--guava-->
+    <guava.version>29.0-jre</guava.version>
   </properties>
 
   <dependencies>
-
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>${commons-collections.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-fileupload</groupId>
+      <artifactId>commons-fileupload</artifactId>
+      <version>${commons-fileupload.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>${commons-beanutils.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <version>${commons-codec.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>${commons-configuration.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>${javax.validation.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>${guava.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>${fastjson.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${org.projectlombok.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>3.1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.16.0</version>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
