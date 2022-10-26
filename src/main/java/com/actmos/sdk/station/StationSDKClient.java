@@ -3,12 +3,11 @@ package com.actmos.sdk.station;
 import com.actmos.sdk.station.config.StationConfig;
 import com.actmos.sdk.station.dto.page.SdkReqPage;
 import com.actmos.sdk.station.dto.page.StdPagedList;
-import com.actmos.sdk.station.dto.station.StationDTO;
-import com.actmos.sdk.station.dto.station.StationPropertiesDTO;
-import com.actmos.sdk.station.dto.station.StationPropertiesUserDTO;
-import com.actmos.sdk.station.dto.station.StationTicketDTO;
+import com.actmos.sdk.station.dto.station.*;
+import com.actmos.sdk.station.transfer.CrossTransfer;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Station Server SDK
@@ -16,9 +15,11 @@ import java.io.Serializable;
 public class StationSDKClient implements Serializable {
 
     private StationConfig config;
+    private CrossTransfer crossTransfer;
 
     public StationSDKClient(StationConfig config) {
         this.config=config;
+        this.crossTransfer=new CrossTransfer(config);
     }
 
     /**
@@ -84,6 +85,53 @@ public class StationSDKClient implements Serializable {
      */
     public boolean deleteStation(long stationId){
         return false;
+    }
+
+
+    /**
+     * 获取针对该空间站已经配置了广告位信息
+     * @param stationId
+     * @return
+     */
+    public List<StationSlotDTO> stationRoomSlotRead(long stationId){
+        return null;
+    }
+
+    /**
+     * 保存一个广告位信息
+     * @param slot
+     * @return
+     */
+    public StationSlotDTO stationSlotSave(StationSlotDTO slot){
+        return null;
+    }
+
+
+    /**
+     * 获取文件夹下对应的素材列表
+     * @param folderId
+     * @return
+     */
+    public List<StationElementDTO> listStationElement(long folderId){
+        return null;
+    }
+
+    /**
+     * 为空间站上传一个素材
+     * @param element
+     * @return
+     */
+    public StationElementDTO uploadStationElement(StationElementDTO element){
+        return null;
+    }
+
+    /**
+     * 删除一个素材
+     * @param elementId
+     * @return
+     */
+    public StationElementDTO deleteStationElement(long elementId){
+        return null;
     }
 
     /**

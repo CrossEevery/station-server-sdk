@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.example</groupId>
+  <groupId>com.actmos.station</groupId>
   <artifactId>station-server-sdk</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -12,22 +12,12 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <org.projectlombok.version>1.18.12</org.projectlombok.version>
-    <lombok.version>1.18.12</lombok.version>
+    <lombok.version>1.18.24</lombok.version>
     <java.version>1.8</java.version>
     <junit.version>4.13</junit.version>
     <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
     <aspectj.version>1.9.5</aspectj.version>
     <spring.context.support.version>5.2.5.RELEASE</spring.context.support.version>
-    <!-- 服务注册与治理版本 -->
-    <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
-    <dubbo-spring-boot-starter.version>2.7.8</dubbo-spring-boot-starter.version>
-    <dubbo.version>2.7.8</dubbo.version>
-    <dubbo-jsonrpc.version>2.7.2</dubbo-jsonrpc.version>
-    <dubbo-spring-context-support.version>1.0.10</dubbo-spring-context-support.version>
-    <nacos-discovery-spring-boot-starter.version>0.2.1</nacos-discovery-spring-boot-starter.version>
-    <nacos-client.version>1.0.0</nacos-client.version>
-    <dubbo-registry-nacos.version>2.7.8</dubbo-registry-nacos.version>
     <!-- 常用工具类 -->
     <fastjson.version>1.2.83</fastjson.version>
     <commons.lang3.version>3.10</commons.lang3.version>
@@ -57,7 +47,6 @@
     <!--guava-->
     <guava.version>29.0-jre</guava.version>
   </properties>
-
   <dependencies>
     <dependency>
       <groupId>commons-collections</groupId>
@@ -100,12 +89,6 @@
       <version>${guava.version}</version>
     </dependency>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>fastjson</artifactId>
       <version>${fastjson.version}</version>
@@ -114,11 +97,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>${commons.lang3.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>${org.projectlombok.version}</version>
     </dependency>
     <dependency>
       <groupId>org.projectlombok</groupId>
@@ -144,8 +122,9 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.12</version>
+      <version>4.13</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
 </project>
