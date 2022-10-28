@@ -9,5 +9,4 @@ public class StationConfig implements Serializable {
     private String endpoint;
     private String key;
     private String security;
-
 }
