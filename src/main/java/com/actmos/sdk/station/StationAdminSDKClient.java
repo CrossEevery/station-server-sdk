@@ -20,7 +20,6 @@ public class StationAdminSDKClient implements Serializable {
 
     public StationAdminSDKClient(StationConfig config) {
         this.config=config;
-        this.crossTransfer=new CrossTransfer(config);
     }
 
     /**
@@ -29,6 +28,7 @@ public class StationAdminSDKClient implements Serializable {
      * @return
      */
     public StdPagedList<StationUserDTO> getStationUserByPage(SdkReqPage page){
+
         return null;
     }
 
@@ -38,6 +38,7 @@ public class StationAdminSDKClient implements Serializable {
      * @return
      */
     public StdPagedList<StationDTO> getStationsByPage(SdkReqPage page){
+
         return null;
     }
 
