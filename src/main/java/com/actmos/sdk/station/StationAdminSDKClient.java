@@ -1,15 +1,22 @@
 package com.actmos.sdk.station;
 
+import com.actmos.sdk.station.config.AdminUrlConfig;
 import com.actmos.sdk.station.config.StationConfig;
+import com.actmos.sdk.station.config.UserUriConfig;
 import com.actmos.sdk.station.dto.page.SdkReqPage;
 import com.actmos.sdk.station.dto.page.StdPagedList;
 import com.actmos.sdk.station.dto.station.*;
 import com.actmos.sdk.station.dto.user.StationUserDTO;
-import com.actmos.sdk.station.transfer.CrossTransfer;
-import com.actmos.sdk.station.transfer.TransferSign;
+import com.actmos.sdk.station.exception.StationException;
+import com.actmos.sdk.station.transfer.*;
+import com.actmos.sdk.station.transfer.format.*;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Station Server SDK
@@ -35,7 +42,6 @@ public class StationAdminSDKClient implements Serializable {
      */
     public StdPagedList<StationUserDTO> getStationUserByPage(SdkReqPage page){
 
-
         return null;
     }
 
@@ -47,7 +53,6 @@ public class StationAdminSDKClient implements Serializable {
      */
     public StdPagedList<StationDTO> getStationsByPage(SdkReqPage page) {
 
-
         return null;
     }
 
@@ -56,8 +61,15 @@ public class StationAdminSDKClient implements Serializable {
      *
      * @return
      */
-    public UploadTokenDTO applyUploadToken() {
-        return null;
+    public UploadTokenDTO applyUploadToken() throws IOException, StationException {
+        UploadTokenDTO rs = null;
+        String request = this.buildGetRequestEndpoint(AdminUrlConfig.UPLOAD_TOKEN, null);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new UploadTokenDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (UploadTokenDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -66,10 +78,24 @@ public class StationAdminSDKClient implements Serializable {
      * @param template
      * @return
      */
-    public StationTrilateralTemplateDTO applyStationTrilateralTemplate(StationTrilateralTemplateDTO template) {
-
-
-        return null;
+    public StationTrilateralTemplateDTO applyStationTrilateralTemplate(StationTrilateralTemplateDTO template) throws Exception {
+        Preconditions.checkNotNull(template, "入参不能为空");
+        Preconditions.checkNotNull(template.getPublishStartTime(), "生效开始时间不能为空");
+        Preconditions.checkNotNull(template.getPublishEndTime(), "生效结束时间不能为空");
+        Preconditions.checkNotNull(template.getName(), "模板名称不能为空");
+        Preconditions.checkNotNull(template.getInfo(), "模板描述不能为空");
+        Preconditions.checkNotNull(template.getTag(), "模板标签不能为空");
+        Preconditions.checkNotNull(template.getPhoto128(), "模板默认图片不能为空");
+        Preconditions.checkNotNull(template.getProjectPath(), "模板应用上传路徑不能为空");
+        Preconditions.checkArgument(template.getStock() > 0, "模板库存不能小于0");
+        StationTrilateralTemplateDTO rs = null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_SLOT_SAVE, null);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, template);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationTrilateralTemplateDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (StationTrilateralTemplateDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -78,10 +104,18 @@ public class StationAdminSDKClient implements Serializable {
      * @param tid
      * @return
      */
-    public StationTrilateralTemplateDTO enableStationTrilateralTemplate(long tid) {
-
-
-        return null;
+    public StationTrilateralTemplateDTO enableStationTrilateralTemplate(long tid) throws IOException, StationException {
+        Preconditions.checkArgument(tid > 0, "模板不存在");
+        StationTrilateralTemplateDTO rs = null;
+        Map<String, Object> parameter = Maps.newHashMap();
+        parameter.put("tid", tid);
+        String request = this.buildGetRequestEndpoint(AdminUrlConfig.TEMPLATE_ENABLE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationTrilateralTemplateDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (StationTrilateralTemplateDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -90,10 +124,18 @@ public class StationAdminSDKClient implements Serializable {
      * @param tid
      * @return
      */
-    public StationTrilateralTemplateDTO disableStationTrilateralTemplate(long tid) {
-
-
-        return null;
+    public StationTrilateralTemplateDTO disableStationTrilateralTemplate(long tid) throws IOException, StationException {
+        Preconditions.checkArgument(tid > 0, "模板不存在");
+        StationTrilateralTemplateDTO rs = null;
+        Map<String, Object> parameter = Maps.newHashMap();
+        parameter.put("tid", tid);
+        String request = this.buildGetRequestEndpoint(AdminUrlConfig.TEMPLATE_DISABLE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationTrilateralTemplateDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (StationTrilateralTemplateDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -103,18 +145,29 @@ public class StationAdminSDKClient implements Serializable {
      * @param openUUID
      * @return
      */
-    public EnshrineDTO grantTemplateToUser(long tid, String openUUID) {
-
-
-        return null;
+    public EnshrineDTO grantTemplateToUser(long tid, String openUUID) throws IOException, StationException {
+        Preconditions.checkArgument(tid > 0, "模板不存在");
+        Preconditions.checkNotNull(openUUID, "OpenUUID不能为空");
+        EnshrineDTO rs = null;
+        Map<String, Object> parameter = Maps.newHashMap();
+        parameter.put("tid", tid);
+        parameter.put("uuid", openUUID);
+        String request = this.buildGetRequestEndpoint(AdminUrlConfig.ENSHRINE_GRANT, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new EnshrineDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (EnshrineDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
      * 使用模板创建一个空间站
+     *
      * @param station
      * @return
      */
-    public StationDTO createStation(StationDTO station){
+    public StationDTO createStation(StationDTO station) throws IOException, StationException {
         Preconditions.checkNotNull(station, "空间信息不能为空");
         Preconditions.checkNotNull(station.getName(), "空间站名称不对为空");
         Preconditions.checkArgument(station.getPublishId() > 0, "发布者的ID不存在");
@@ -127,9 +180,14 @@ public class StationAdminSDKClient implements Serializable {
         Preconditions.checkArgument(station.getPropertiesType() > 0, "请选择空间站的道具模式");
         Preconditions.checkArgument(station.getUserMode() > 0, "请选择空间站的用户模式");
         Preconditions.checkArgument(station.getEnshrineId() > 0, "空间站模板ID不能为空");
-
-
-        return null;
+        StationDTO rs = null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_SLOT_SAVE, null);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, station);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (StationDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -138,10 +196,24 @@ public class StationAdminSDKClient implements Serializable {
      * @param ticket
      * @return
      */
-    public StationTicketDTO grantStationTicketToUser(StationTicketDTO ticket) {
+    public StationTicketDTO grantStationTicketToUser(StationTicketDTO ticket) throws IOException, StationException {
         Preconditions.checkNotNull(ticket, "票据信息不能为空");
-
-        return null;
+        Preconditions.checkArgument(ticket.getToStationId() > 0, "空间信息不能为空");
+        Preconditions.checkNotNull(ticket.getStartTime(), "票据需要设置开始时间");
+        Preconditions.checkNotNull(ticket.getEndTime(), "票据需要设置结束时间");
+        Preconditions.checkNotNull(ticket.getFromStationName(), "需要设置来源名称");
+        Preconditions.checkNotNull(ticket.getUuid(), "被授权用户不能为空");
+        Preconditions.checkNotNull(ticket.getName(), "票据名称不能为空");
+        Preconditions.checkArgument(ticket.getTicketType() > 0, "票据类型需要设置");
+        Preconditions.checkNotNull(ticket.getInfo(), "票据描述不能为空");
+        StationTicketDTO rs = null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_SLOT_SAVE, null);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, ticket);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationTicketDTOFormat());
+        if (httpResponse != null && httpResponse.getData() != null) {
+            rs = (StationTicketDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
 
@@ -157,10 +229,30 @@ public class StationAdminSDKClient implements Serializable {
         Preconditions.checkArgument(propertiesId > 0, "道具ID不存在");
         Preconditions.checkNotNull(toUserId, "被发放道具用户不能为空");
         Preconditions.checkArgument(num > 0, "发放数量需要大于0");
-
+//        Map<String, Object> parameter = Maps.newHashMap();
+//        parameter.put("pid", propertiesId);
+//        parameter.put("uuid", toUserId);
+//        parameter.put("num", num);
+//        String request = this.buildGetRequestEndpoint(AdminUrlConfig., parameter);
+//        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
 
 
         return null;
+    }
+
+    private String buildGetRequestEndpoint(String uri, Map<String, Object> parameter) {
+        StringBuffer requestBuilder = new StringBuffer();
+        requestBuilder.append(this.config.getEndpoint());
+        requestBuilder.append(uri);
+        if (parameter != null) {
+            requestBuilder.append("?");
+            for (Map.Entry<String, Object> para : parameter.entrySet()) {
+                if (!Strings.isNullOrEmpty(para.getKey()) && para.getValue() != null) {
+                    requestBuilder.append(para.getKey()).append("=").append(para.getValue().toString());
+                }
+            }
+        }
+        return requestBuilder.toString();
     }
 
 }
