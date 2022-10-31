@@ -1,15 +1,21 @@
 package com.actmos.sdk.station;
 
+import com.actmos.sdk.station.common.EncryptAndDecryptUtil;
+import com.actmos.sdk.station.config.AdminUrlConfig;
 import com.actmos.sdk.station.config.StationConfig;
 import com.actmos.sdk.station.config.UserUriConfig;
 import com.actmos.sdk.station.dto.station.*;
 import com.actmos.sdk.station.dto.token.HeaderTokenDTO;
+import com.actmos.sdk.station.dto.user.LoginByThirdDTO;
+import com.actmos.sdk.station.dto.user.LoginSecretDataDTO;
+import com.actmos.sdk.station.dto.user.StationUserDTO;
 import com.actmos.sdk.station.exception.StationException;
 import com.actmos.sdk.station.transfer.*;
 import com.actmos.sdk.station.transfer.format.StationDTOFormat;
 import com.actmos.sdk.station.transfer.format.StationElementDTOFormat;
 import com.actmos.sdk.station.transfer.format.StationPropertiesDTOFormat;
 import com.actmos.sdk.station.transfer.format.StationSlotDTOFormat;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
@@ -40,10 +46,26 @@ public class StationUserSDKClient implements Serializable {
      * @param openId
      * @return
      */
-    public HeaderTokenDTO authConnect(String openId) {
+    public StationUserDTO authConnect(String openId) throws Exception {
         Preconditions.checkNotNull(openId, "OpenUUID不能为空");
-
-        return null;
+        // openid加密
+        LoginSecretDataDTO loginSecretDataDTO = new LoginSecretDataDTO();
+        loginSecretDataDTO.setOpenId(openId);
+        String secretData = EncryptAndDecryptUtil.encrypt(JSONObject.toJSONString(loginSecretDataDTO), stationConfig.getSecurity());
+        String ddd = EncryptAndDecryptUtil.decrypt(secretData, stationConfig.getSecurity());
+        LoginByThirdDTO thirdDTO = new LoginByThirdDTO();
+        thirdDTO.setAppKey(stationConfig.getKey());
+        thirdDTO.setSecretData(secretData);
+        // 调用用户中心接口
+        Map<String, Object> parameter = Maps.newHashMap();
+        String request = this.buildGetRequestEndpoint(AdminUrlConfig.USER_LOGIN_THIRD, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, thirdDTO);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationDTOFormat());
+        StationUserDTO stationUserDTO = null;
+        if (httpResponse != null && httpResponse.getData() != null) {
+            stationUserDTO= (StationUserDTO) httpResponse.getData();
+        }
+        return stationUserDTO;
     }
 
     /**
