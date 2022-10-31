@@ -2,6 +2,7 @@ package com.actmos.sdk.station.transfer;
 
 import com.actmos.sdk.station.common.HttpUtil;
 import com.actmos.sdk.station.common.JsonUtil;
+import com.actmos.sdk.station.exception.StationException;
 import com.actmos.sdk.station.transfer.format.ResponseFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -17,7 +18,7 @@ public class CrossTransfer implements Serializable {
         this.transferSign = transferSign;
     }
 
-    public CrossResponse getTransfer(CrossRequest request, ResponseFormat format) throws IOException {
+    public CrossResponse getTransfer(CrossRequest request, ResponseFormat format) throws IOException, StationException {
         Preconditions.checkNotNull(request);
         Preconditions.checkNotNull(format);
         CrossResponse rs=null;

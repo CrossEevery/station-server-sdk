@@ -5,7 +5,13 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public abstract class CrossResponse implements Serializable {
+public class CrossResponse implements Serializable {
     private  CrossRequest request;
     protected Object data;
+    public CrossResponse() {
+    }
+
+    public CrossResponse(Object data) {
+        this.data = data;
+    }
 }

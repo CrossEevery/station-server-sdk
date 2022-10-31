@@ -62,6 +62,17 @@ public class JsonUtil implements Serializable {
         return JSON.parseArray(text, tClass);
     }
 
+    /**
+     * 序列化数组
+     * @param text
+     * @param tClass
+     * @return
+     * @param <T>
+     */
+    public static final <T> List<T> parseArray(JSONObject text, Class<T> tClass) {
+        return JSON.parseArray(JSON.toJSONString(text),tClass);
+    }
+
     public static Object parser(String content, TypeReference typeReference) {
         return JSON.parseObject(content, typeReference);
     }
