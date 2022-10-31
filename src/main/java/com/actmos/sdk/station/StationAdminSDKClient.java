@@ -7,6 +7,7 @@ import com.actmos.sdk.station.dto.station.*;
 import com.actmos.sdk.station.dto.token.HeaderTokenDTO;
 import com.actmos.sdk.station.dto.user.StationUserDTO;
 import com.actmos.sdk.station.transfer.CrossTransfer;
+import com.actmos.sdk.station.transfer.TransferSign;
 import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
@@ -22,6 +23,11 @@ public class StationAdminSDKClient implements Serializable {
 
     public StationAdminSDKClient(StationConfig config) {
         this.config=config;
+        Preconditions.checkNotNull(this.config, "SDK配置不能为空");
+        Preconditions.checkNotNull(this.config.getEndpoint(), "访问请求不能为空");
+        Preconditions.checkNotNull(this.config.getKey(), "SDK KEY不能为空");
+        Preconditions.checkNotNull(this.config.getSecurity(), "SDK SECURITY不能为空");
+        this.crossTransfer = new CrossTransfer(new TransferSign(config));
     }
 
     /**
@@ -30,6 +36,7 @@ public class StationAdminSDKClient implements Serializable {
      * @return
      */
     public StdPagedList<StationUserDTO> getStationUserByPage(SdkReqPage page){
+
 
         return null;
     }
@@ -78,7 +85,6 @@ public class StationAdminSDKClient implements Serializable {
         Preconditions.checkArgument(propertiesId > 0, "道具ID不存在");
         Preconditions.checkNotNull(toUserId, "被发放道具用户不能为空");
         Preconditions.checkArgument(num > 0, "发放数量需要大于0");
-
 
         return null;
     }
