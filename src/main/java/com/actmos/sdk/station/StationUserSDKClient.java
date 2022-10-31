@@ -4,12 +4,17 @@ import com.actmos.sdk.station.config.StationConfig;
 import com.actmos.sdk.station.config.UserUriConfig;
 import com.actmos.sdk.station.dto.station.*;
 import com.actmos.sdk.station.dto.token.HeaderTokenDTO;
-import com.actmos.sdk.station.transfer.CrossTransfer;
-import com.actmos.sdk.station.transfer.TransferSign;
+import com.actmos.sdk.station.exception.StationException;
+import com.actmos.sdk.station.transfer.*;
+import com.actmos.sdk.station.transfer.format.StationDTOFormat;
+import com.actmos.sdk.station.transfer.format.StationElementDTOFormat;
+import com.actmos.sdk.station.transfer.format.StationPropertiesDTOFormat;
+import com.actmos.sdk.station.transfer.format.StationSlotDTOFormat;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +43,6 @@ public class StationUserSDKClient implements Serializable {
     public HeaderTokenDTO authConnect(String openId) {
         Preconditions.checkNotNull(openId, "OpenUUID不能为空");
 
-
         return null;
     }
 
@@ -49,7 +53,7 @@ public class StationUserSDKClient implements Serializable {
      * @param station
      * @return
      */
-    public StationDTO creteStation(HeaderTokenDTO token, StationDTO station) {
+    public StationDTO creteStation(HeaderTokenDTO token, StationDTO station) throws Exception {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(station, "空间信息不能为空");
         Preconditions.checkNotNull(station.getName(), "空间站名称不对为空");
@@ -63,13 +67,17 @@ public class StationUserSDKClient implements Serializable {
         Preconditions.checkArgument(station.getPropertiesType() > 0, "请选择空间站的道具模式");
         Preconditions.checkArgument(station.getUserMode() > 0, "请选择空间站的用户模式");
         Preconditions.checkArgument(station.getEnshrineId() > 0, "空间站模板ID不能为空");
+        StationDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
-        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_SAVE,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_SAVE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, station);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs= (StationDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -79,19 +87,22 @@ public class StationUserSDKClient implements Serializable {
      * @param station
      * @return
      */
-    public StationDTO editStation(HeaderTokenDTO token, StationDTO station) {
+    public StationDTO editStation(HeaderTokenDTO token, StationDTO station) throws Exception {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkNotNull(station, "空间站信息不能为空");
+        StationDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
-        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_SAVE,parameter);
-
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_SAVE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, station);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
 
@@ -102,19 +113,23 @@ public class StationUserSDKClient implements Serializable {
      * @param stationId
      * @return
      */
-    public StationDTO getDetail(HeaderTokenDTO token, long stationId) {
+    public StationDTO getDetail(HeaderTokenDTO token, long stationId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(stationId > 0, "空间站ID不存在");
+        StationDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("stationid", String.valueOf(stationId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_DETAIL,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_DETAIL, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
 
@@ -125,18 +140,23 @@ public class StationUserSDKClient implements Serializable {
      * @param stationId
      * @return
      */
-    public StationDTO publishStation(HeaderTokenDTO token, long stationId) {
+    public StationDTO publishStation(HeaderTokenDTO token, long stationId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(stationId > 0, "空间站ID不存在");
+        StationDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("stationid", String.valueOf(stationId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_PUBLISH,parameter);
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_PUBLISH, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -146,18 +166,23 @@ public class StationUserSDKClient implements Serializable {
      * @param stationId
      * @return
      */
-    public boolean disableStation(HeaderTokenDTO token, long stationId) {
+    public StationDTO disableStation(HeaderTokenDTO token, long stationId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(stationId > 0, "空间站ID不存在");
         Map<String, Object> parameter = Maps.newHashMap();
+        StationDTO rs = null;
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("stationid", String.valueOf(stationId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_DISABLE,parameter);
-
-        return false;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.MANAGE_EDITOR_ROOM_DISABLE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationDTO) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -165,21 +190,24 @@ public class StationUserSDKClient implements Serializable {
      *
      * @param token
      * @param stationId
-     *
-     * */
-    public List<StationSlotDTO> stationRoomSlotRead(HeaderTokenDTO token, long stationId) {
+     */
+    public List<StationSlotDTO> stationRoomSlotRead(HeaderTokenDTO token, long stationId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(stationId > 0, "空间站ID不存在");
+        List<StationSlotDTO> rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("stationid", String.valueOf(stationId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_PLAYER_SLOT,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_PLAYER_SLOT, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest,new StationSlotDTOFormat(true));
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(List<StationSlotDTO>) httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -189,7 +217,7 @@ public class StationUserSDKClient implements Serializable {
      * @param slot
      * @return
      */
-    public StationSlotDTO stationSlotSave(HeaderTokenDTO token, StationSlotDTO slot) {
+    public StationSlotDTO stationSlotSave(HeaderTokenDTO token, StationSlotDTO slot) throws Exception {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
@@ -197,14 +225,18 @@ public class StationUserSDKClient implements Serializable {
         Preconditions.checkNotNull(slot.getSlotCode(), "广告位编码不能为空");
         Preconditions.checkArgument(slot.getStationId() > 0, "空间站ID不存在");
         Preconditions.checkArgument(slot.getElementStationId() > 0, "素材ID不存在");
+        StationSlotDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_SLOT_SAVE,parameter);
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_SLOT_SAVE, parameter);
         //POST发送数据
-
-
-        return null;
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, slot);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationSlotDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationSlotDTO)httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -214,19 +246,23 @@ public class StationUserSDKClient implements Serializable {
      * @param folderId
      * @return
      */
-    public List<StationElementDTO> listStationElement(HeaderTokenDTO token, long folderId) {
+    public List<StationElementDTO> listStationElement(HeaderTokenDTO token, long folderId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(folderId > 0, "素材文件夹不存在");
+        List<StationElementDTO> rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("folderid", String.valueOf(folderId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_ELEMENT_LIST,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_ELEMENT_LIST, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationElementDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(List<StationElementDTO>)httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -236,7 +272,7 @@ public class StationUserSDKClient implements Serializable {
      * @param element
      * @return
      */
-    public StationElementDTO uploadStationElement(HeaderTokenDTO token, StationElementDTO element) {
+    public StationElementDTO uploadStationElement(HeaderTokenDTO token, StationElementDTO element) throws Exception {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
@@ -244,13 +280,17 @@ public class StationUserSDKClient implements Serializable {
         Preconditions.checkNotNull(element.getName(), "名称不能为空");
         Preconditions.checkArgument(element.getElementType() > 0, "文件类型需要设定");
         Preconditions.checkArgument(element.getFolderId() > 0, "文件夹不能为空");
+        StationElementDTO rs=null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_ELEMENT_UPLOAD,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_ELEMENT_UPLOAD, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, element);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationElementDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationElementDTO)httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -260,19 +300,23 @@ public class StationUserSDKClient implements Serializable {
      * @param elementId
      * @return
      */
-    public StationElementDTO deleteStationElement(HeaderTokenDTO token, long elementId) {
+    public StationElementDTO deleteStationElement(HeaderTokenDTO token, long elementId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(elementId > 0, "素材ID不存在");
+        StationElementDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("elementid", String.valueOf(elementId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_ELEMENT_DELETE,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_ELEMENT_DELETE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationElementDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationElementDTO)httpResponse.getData();
+        }
+        return rs;
     }
 
 
@@ -283,40 +327,48 @@ public class StationUserSDKClient implements Serializable {
      * @param properties
      * @return
      */
-    public StationPropertiesDTO registerProperties(HeaderTokenDTO token, StationPropertiesDTO properties) {
+    public StationPropertiesDTO registerProperties(HeaderTokenDTO token, StationPropertiesDTO properties) throws Exception {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkNotNull(properties, "道具信息不能为空");
+        StationPropertiesDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_PROPERTIES_SETTING,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDITOR_PROPERTIES_SETTING, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, properties);
+        CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationPropertiesDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationPropertiesDTO)httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
-     * 启动一个道具
+     * 启用一个道具
      *
      * @param token
      * @param propertiesId
      * @return
      */
-    public StationPropertiesDTO enableProperties(HeaderTokenDTO token, long propertiesId) {
+    public StationPropertiesDTO enableProperties(HeaderTokenDTO token, long propertiesId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(propertiesId > 0, "道具ID不存在");
+        StationPropertiesDTO rs = null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("propertiesid", String.valueOf(propertiesId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDOTOR_PROPERTIES_ENABLE,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDOTOR_PROPERTIES_ENABLE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationPropertiesDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationPropertiesDTO)httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
@@ -326,19 +378,23 @@ public class StationUserSDKClient implements Serializable {
      * @param propertiesId
      * @return
      */
-    public StationPropertiesDTO disableProperties(HeaderTokenDTO token, long propertiesId) {
+    public StationPropertiesDTO disableProperties(HeaderTokenDTO token, long propertiesId) throws IOException, StationException {
         Preconditions.checkNotNull(token, "Token信息不能为空");
         Preconditions.checkNotNull(token.getToken(), "Token信息不能为空");
         Preconditions.checkNotNull(token.getOpenUUID(), "OpenUUID不能为空");
         Preconditions.checkArgument(propertiesId > 0, "道具ID不存在");
+        StationPropertiesDTO rs=null;
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("uuid", token.getOpenUUID());
         parameter.put("token", token.getToken());
         parameter.put("propertiesid", String.valueOf(propertiesId));
-        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDOTOR_PROPERTIES_DISABLE,parameter);
-
-
-        return null;
+        String request = this.buildGetRequestEndpoint(UserUriConfig.STATION_EDOTOR_PROPERTIES_DISABLE, parameter);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationPropertiesDTOFormat());
+        if (httpResponse != null&&httpResponse.getData()!=null) {
+            rs=(StationPropertiesDTO)httpResponse.getData();
+        }
+        return rs;
     }
 
     /**
