@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 
 public class UserUriConfig implements Serializable {
+    public static final String USER_LOGIN_THIRD = "uc/third/user/login";
     public final static String MANAGE_EDITOR_ROOM_DETAIL = "/station/manage/room/detail";
     public final static String MANAGE_EDITOR_ROOM_PUBLISH = "/station/manage/room/publish";
     public final static String MANAGE_EDITOR_ROOM_DISABLE = "/station/manage/room/disable";

@@ -58,7 +58,7 @@ public class StationUserSDKClient implements Serializable {
         thirdDTO.setSecretData(secretData);
         // 调用用户中心接口
         Map<String, Object> parameter = Maps.newHashMap();
-        String request = this.buildGetRequestEndpoint(AdminUrlConfig.USER_LOGIN_THIRD, parameter);
+        String request = this.buildGetRequestEndpoint(UserUriConfig.USER_LOGIN_THIRD, parameter);
         CrossRequest httpRequest = new CrossRequest(request, RequestMethod.POST, thirdDTO);
         CrossResponse httpResponse = this.crossTransfer.postTransfer(httpRequest, new StationDTOFormat());
         StationUserDTO stationUserDTO = null;
@@ -439,6 +439,7 @@ public class StationUserSDKClient implements Serializable {
 
         return null;
     }
+
 
     private String buildGetRequestEndpoint(String uri, Map<String, Object> parameter) {
         StringBuffer requestBuilder = new StringBuffer();
