@@ -22,12 +22,11 @@ public class CrossRequest implements Serializable {
     public CrossRequest(String uri, RequestMethod method, Object bodyData) {
         this.uri = uri;
         this.method = method;
-        this.bodyData = bodyData;
+        if (method.getType() == RequestMethod.GET.getType()) {
+            this.getData = (Map<String, String>) bodyData;
+        } else if (method.getType() == RequestMethod.POST.getType()) {
+            this.bodyData = bodyData;
+        }
     }
 
-    public CrossRequest(String uri, RequestMethod method, Map<String, String> getData) {
-        this.uri = uri;
-        this.method = method;
-        this.getData = getData;
-    }
 }

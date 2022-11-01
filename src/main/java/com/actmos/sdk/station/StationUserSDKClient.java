@@ -445,13 +445,15 @@ public class StationUserSDKClient implements Serializable {
         StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.stationConfig.getEndpoint());
         requestBuilder.append(uri);
-        if (parameter != null) {
+        if (parameter != null&&parameter.size()>0) {
             requestBuilder.append("?");
             for (Map.Entry<String, Object> para : parameter.entrySet()) {
                 if (!Strings.isNullOrEmpty(para.getKey()) && para.getValue() != null) {
                     requestBuilder.append(para.getKey()).append("=").append(para.getValue().toString());
+                    requestBuilder.append("&");
                 }
             }
+            return requestBuilder.toString().substring(0,requestBuilder.toString().length()-1);
         }
         return requestBuilder.toString();
     }

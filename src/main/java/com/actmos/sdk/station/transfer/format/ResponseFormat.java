@@ -28,7 +28,11 @@ public abstract class ResponseFormat implements Serializable {
         if (json != null && json.containsKey("data") && json.containsKey("code") && json.getInteger("code") == 200) {
             srsData=json.getJSONObject("data");
         }else{
-            throw new StationException("response message can't format");
+            if (json != null && json.containsKey("data") && json.containsKey("code") && json.getInteger("code") != 200) {
+                throw new StationException("response code:" + json.getInteger("code") + "  this message:" + json.getString("message"));
+            } else {
+                throw new StationException("response message can't format");
+            }
         }
         return srsData;
     }

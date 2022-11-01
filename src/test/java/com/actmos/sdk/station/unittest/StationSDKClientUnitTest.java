@@ -8,11 +8,11 @@ import com.alibaba.fastjson.JSONObject;
 public class StationSDKClientUnitTest {
     public static void main(String[] args) throws Exception {
         StationConfig stationConfig = new StationConfig();
-        stationConfig.setEndpoint("http://api.open.crossevery.com/");
-        stationConfig.setKey("1234");
-        stationConfig.setSecurity("91754573asdasdasfe83df46asdasd");
+        stationConfig.setEndpoint("https://api.open.crossevery.com");
+        stationConfig.setKey("xxxx");
+        stationConfig.setSecurity("xxxxxxxxx");
         StationUserSDKClient stationUserSDKClient = new StationUserSDKClient(stationConfig);
-        StationUserDTO stationUserDTO = stationUserSDKClient.authConnect("1234567890");
+        StationUserDTO stationUserDTO = stationUserSDKClient.authConnect("xxxxxxxxxx");
         System.out.println(JSONObject.toJSONString(stationUserDTO));
     }
 }
