@@ -442,7 +442,7 @@ public class StationUserSDKClient implements Serializable {
 
 
     private String buildGetRequestEndpoint(String uri, Map<String, Object> parameter) {
-        StringBuffer requestBuilder = new StringBuffer();
+        StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.stationConfig.getEndpoint());
         requestBuilder.append(uri);
         if (parameter != null) {

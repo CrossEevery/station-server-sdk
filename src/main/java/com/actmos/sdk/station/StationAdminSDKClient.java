@@ -32,7 +32,7 @@ public class StationAdminSDKClient implements Serializable {
         Preconditions.checkNotNull(this.config.getEndpoint(), "访问请求不能为空");
         Preconditions.checkNotNull(this.config.getKey(), "SDK KEY不能为空");
         Preconditions.checkNotNull(this.config.getSecurity(), "SDK SECURITY不能为空");
-        this.crossTransfer = new CrossTransfer(new TransferSign(config));
+        this.crossTransfer = new CrossTransfer(new TransferSign(config), true);
     }
 
     /**
@@ -64,7 +64,7 @@ public class StationAdminSDKClient implements Serializable {
     public UploadTokenDTO applyUploadToken() throws IOException, StationException {
         UploadTokenDTO rs = null;
         String request = this.buildGetRequestEndpoint(AdminUrlConfig.UPLOAD_TOKEN, null);
-        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET, null);
         CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new UploadTokenDTOFormat());
         if (httpResponse != null && httpResponse.getData() != null) {
             rs = (UploadTokenDTO) httpResponse.getData();
@@ -110,7 +110,7 @@ public class StationAdminSDKClient implements Serializable {
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("tid", tid);
         String request = this.buildGetRequestEndpoint(AdminUrlConfig.TEMPLATE_ENABLE, parameter);
-        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET,parameter);
         CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationTrilateralTemplateDTOFormat());
         if (httpResponse != null && httpResponse.getData() != null) {
             rs = (StationTrilateralTemplateDTO) httpResponse.getData();
@@ -130,7 +130,7 @@ public class StationAdminSDKClient implements Serializable {
         Map<String, Object> parameter = Maps.newHashMap();
         parameter.put("tid", tid);
         String request = this.buildGetRequestEndpoint(AdminUrlConfig.TEMPLATE_DISABLE, parameter);
-        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET,parameter);
         CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new StationTrilateralTemplateDTOFormat());
         if (httpResponse != null && httpResponse.getData() != null) {
             rs = (StationTrilateralTemplateDTO) httpResponse.getData();
@@ -153,7 +153,7 @@ public class StationAdminSDKClient implements Serializable {
         parameter.put("tid", tid);
         parameter.put("uuid", openUUID);
         String request = this.buildGetRequestEndpoint(AdminUrlConfig.ENSHRINE_GRANT, parameter);
-        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET);
+        CrossRequest httpRequest = new CrossRequest(request, RequestMethod.GET,parameter);
         CrossResponse httpResponse = this.crossTransfer.getTransfer(httpRequest, new EnshrineDTOFormat());
         if (httpResponse != null && httpResponse.getData() != null) {
             rs = (EnshrineDTO) httpResponse.getData();
@@ -240,8 +240,9 @@ public class StationAdminSDKClient implements Serializable {
         return null;
     }
 
+
     private String buildGetRequestEndpoint(String uri, Map<String, Object> parameter) {
-        StringBuffer requestBuilder = new StringBuffer();
+        StringBuilder requestBuilder = new StringBuilder();
         requestBuilder.append(this.config.getEndpoint());
         requestBuilder.append(uri);
         if (parameter != null) {

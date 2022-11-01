@@ -18,7 +18,7 @@ public class SignUtil implements Serializable {
      * @param parameter
      * @return
      */
-    public TreeMap<String, String> getParameter(Map<String, String[]> parameter) {
+    private static TreeMap<String, String> getParameter(Map<String, String[]> parameter) {
         TreeMap<String, String> rs = null;
         if (parameter != null) {
             rs = new TreeMap<String, String>();
@@ -37,7 +37,8 @@ public class SignUtil implements Serializable {
      * @param params
      * @return
      */
-    public String getSign(TreeMap<String, String> params, String secret) {
+    public static String getSign(Map<String, String[]> paramsa, String secret) {
+        TreeMap<String, String> params = getParameter(paramsa);
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : params.entrySet()) {
             sb.append(entry.getKey()).append("=").append(entry.getValue()).append("&");

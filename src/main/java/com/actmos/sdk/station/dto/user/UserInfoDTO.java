@@ -20,4 +20,6 @@ public class UserInfoDTO implements Serializable {
     private String introduction;
     private Date createTime;
     private String uname;
+    private String thirdType;
+    private String openid;
 }

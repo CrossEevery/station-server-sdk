@@ -115,8 +115,8 @@ public class HttpUtil implements Serializable {
         return (String) setPostRequest(targetUrl, postData, TYPE_STRING, null);
     }
 
-    public String getPostJsonRequest(String targetUrl, String postData) throws Exception {
-        return (String) setPostJsonRequest(targetUrl, postData, TYPE_STRING, null);
+    public String getPostJsonRequest(String targetUrl, String postData, Map<String, String> header) throws Exception {
+        return (String) setPostJsonRequest(targetUrl, postData, TYPE_STRING, null, header);
     }
 
     public String getPostRequest(String targetUrl, String postData, Map<String, String> header) throws Exception {
@@ -346,7 +346,7 @@ public class HttpUtil implements Serializable {
      * @return
      * @throws Exception
      */
-    private Object setPostJsonRequest(String targetUrl, String postData, String responseType, OutputStream outputStream) throws Exception {
+    private Object setPostJsonRequest(String targetUrl, String postData, String responseType, OutputStream outputStream, Map<String, String> header) throws Exception {
         if (Strings.isNullOrEmpty(targetUrl)) {
             throw new IllegalArgumentException("调用HttpClientUtil.setPostRequest方法，targetUrl不能为空!");
         }
@@ -371,6 +371,12 @@ public class HttpUtil implements Serializable {
 
             //服务端完成返回后，主动关闭链接
             method.setRequestHeader("Connection", "close");
+
+            if (header != null) {
+                for (Map.Entry<String, String> hd : header.entrySet()) {
+                    method.setRequestHeader(hd.getKey(), hd.getValue());
+                }
+            }
 
             method.setRequestEntity(re);
             int sendStatus = client.executeMethod(method);
@@ -511,6 +517,25 @@ public class HttpUtil implements Serializable {
     public String getGetResponseAsString(String url) throws IOException {
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod(url);
+        client.executeMethod(method);
+        String res = method.getResponseBodyAsString();
+        return res;
+    }
+
+    /**
+     * 发起GET请求
+     *
+     * @param url
+     * @return
+     */
+    public String getGetResponseAsString(String url, Map<String, String> header) throws IOException {
+        HttpClient client = new HttpClient();
+        HttpMethod method = new GetMethod(url);
+        if (header != null) {
+            for (Map.Entry<String, String> hd : header.entrySet()) {
+                method.setRequestHeader(hd.getKey(), hd.getValue());
+            }
+        }
         client.executeMethod(method);
         String res = method.getResponseBodyAsString();
         return res;
