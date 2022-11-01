@@ -14,13 +14,11 @@ public abstract class ResponseFormat implements Serializable {
     public ResponseFormat() {
     }
 
-
     public ResponseFormat(boolean isCollect) {
         this.isCollect = isCollect;
     }
 
     public abstract CrossResponse formatResult(String srs) throws StationException;
-
 
     protected JSONObject getSuccessString(String srs) throws StationException {
         JSONObject json = JSON.parseObject(srs);

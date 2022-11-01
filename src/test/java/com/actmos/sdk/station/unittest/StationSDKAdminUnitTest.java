@@ -21,8 +21,8 @@ public class StationSDKAdminUnitTest {
     public void buildBefore() {
         this.stationConfig = new StationConfig();
         stationConfig.setEndpoint("http://127.0.0.1:8888");
-        stationConfig.setKey("1234");
-        stationConfig.setSecurity("91754573fe83df46");
+        stationConfig.setKey("you publish key");
+        stationConfig.setSecurity("you private key");
         client = new StationAdminSDKClient(this.stationConfig);
     }
 
