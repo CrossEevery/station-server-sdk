@@ -9,8 +9,8 @@ public class StationSDKClientUnitTest {
     public static void main(String[] args) throws Exception {
         StationConfig stationConfig = new StationConfig();
         stationConfig.setEndpoint("https://api.open.crossevery.com");
-        stationConfig.setKey("xxxx");
-        stationConfig.setSecurity("xxxxxxxxx");
+        stationConfig.setKey("you publish key");
+        stationConfig.setSecurity("you private key");
         StationUserSDKClient stationUserSDKClient = new StationUserSDKClient(stationConfig);
         StationUserDTO stationUserDTO = stationUserSDKClient.authConnect("xxxxxxxxxx");
         System.out.println(JSONObject.toJSONString(stationUserDTO));

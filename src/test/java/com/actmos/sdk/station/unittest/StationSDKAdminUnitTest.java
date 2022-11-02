@@ -20,7 +20,7 @@ public class StationSDKAdminUnitTest {
     @Before
     public void buildBefore() {
         this.stationConfig = new StationConfig();
-        stationConfig.setEndpoint("http://127.0.0.1:8888");
+        stationConfig.setEndpoint("https://api.open.crossevery.com");
         stationConfig.setKey("you publish key");
         stationConfig.setSecurity("you private key");
         client = new StationAdminSDKClient(this.stationConfig);
@@ -28,11 +28,27 @@ public class StationSDKAdminUnitTest {
 
     @Test
     public void getUploadTempTokenUnitTest() {
-        System.out.println("----------------------");
         try {
             UploadTokenDTO dto = this.client.applyUploadToken();
             if (dto != null) {
                 System.out.println(JsonUtil.simpleJson(dto));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (StationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void uploadFileUnitTest() {
+        String file = "you template file path";
+        try {
+            UploadTokenDTO dto = this.client.applyUploadToken();
+            if (dto != null) {
+                System.out.println(JsonUtil.simpleJson(dto));
+                String eTag = this.client.uploadFile(file, dto);
+                System.out.println(eTag);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

@@ -12,7 +12,18 @@ import com.actmos.sdk.station.transfer.format.*;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import com.qcloud.cos.COSClient;
+import com.qcloud.cos.ClientConfig;
+import com.qcloud.cos.auth.BasicCOSCredentials;
+import com.qcloud.cos.auth.COSCredentials;
+import com.qcloud.cos.exception.CosClientException;
+import com.qcloud.cos.exception.CosServiceException;
+import com.qcloud.cos.model.ObjectMetadata;
+import com.qcloud.cos.model.PutObjectRequest;
+import com.qcloud.cos.model.PutObjectResult;
+import com.qcloud.cos.region.Region;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
@@ -69,6 +80,40 @@ public class StationAdminSDKClient implements Serializable {
             rs = (UploadTokenDTO) httpResponse.getData();
         }
         return rs;
+    }
+
+
+    /**
+     * 上传文件
+     *
+     * @param file
+     * @param uploadToken
+     * @return
+     */
+    public String uploadFile(String file, UploadTokenDTO uploadToken) throws StationException {
+        COSCredentials cred = new BasicCOSCredentials(uploadToken.getResponse().credentials.tmpSecretId, uploadToken.getResponse().credentials.tmpSecretKey);
+        ClientConfig clientConfig = new ClientConfig(new Region(uploadToken.getRegion()));
+        COSClient cosclient = new COSClient(cred, clientConfig);
+        String bucketName = uploadToken.getBucketName();
+        File localFile = new File(file);
+        if (!localFile.exists()) {
+            throw new StationException("本地文件不存在");
+        }
+        PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, uploadToken.getFilePath(), localFile);
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setSecurityToken(uploadToken.getResponse().credentials.sessionToken);
+        putObjectRequest.setMetadata(objectMetadata);
+        String etag = null;
+        try {
+            PutObjectResult putObjectResult = cosclient.putObject(putObjectRequest);
+            etag = putObjectResult.getETag();
+        } catch (CosServiceException e) {
+            e.printStackTrace();
+        } catch (CosClientException e) {
+            e.printStackTrace();
+        }
+        cosclient.shutdown();
+        return etag;
     }
 
     /**
